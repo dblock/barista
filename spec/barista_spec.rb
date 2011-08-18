@@ -41,6 +41,14 @@ describe Barista do
       alert_js = IO.read(File.join(@public_path, "alert.js"))
       alert_js.should_not include "DO NOT MODIFY"
     end
+    it "can be hooked" do
+      Barista.add_preamble do |location|
+        "/* HOOKED: #{Pathname.new(location).relative_path_from(Rails.root).to_s}\n\n"
+      end
+      Barista::compile_all!
+      alert_js = IO.read(File.join(@public_path, "alert.js"))
+      alert_js.should include "HOOKED: #{Pathname.new(File.join(@assets_path, "alert.coffee")).relative_path_from(Rails.root).to_s}"
+    end
   end
 
   context 'compiling files'
@@ -61,6 +69,8 @@ describe Barista do
     it "produces alert.js" do
       Barista::compile_all!
       File.exist?(File.join(@public_path, "alert.js")).should be_true
+      alert_js = IO.read(File.join(@public_path, "alert.js"))
+      alert_js.should include "return alert('hello world');"
     end
   end
 
