@@ -43,7 +43,7 @@ describe Barista do
     end
     it "can be hooked" do
       Barista.add_preamble do |location|
-        "/* HOOKED: #{Pathname.new(location).relative_path_from(Rails.root).to_s}\n\n"
+        "/* HOOKED: #{Pathname.new(location).relative_path_from(Rails.root).to_s} */\n\n"
       end
       Barista::compile_all!
       alert_js = IO.read(File.join(@public_path, "alert.js"))
